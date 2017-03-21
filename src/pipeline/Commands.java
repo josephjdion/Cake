@@ -1,8 +1,10 @@
 package pipeline;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import util.FastqReader;
 
@@ -81,6 +83,10 @@ public class Commands {
 	// =========================================
 	// Internal Utility Functions
 	// =========================================
+	
+	/**
+	 * Converts the fastq File in the output folder to fasta
+	 */
 	public void makeFasta() {
 
 		File outputFile = new File(outputDir.toString() + "/02_FASTA.fasta");
@@ -95,11 +101,58 @@ public class Commands {
 		}
 
 	}
+
+	/**
+	 * This executes one single string into the console. 
+	 * @param command 
+	 */
+	public void commandExecute(String command) {
+		StringBuffer out = new StringBuffer();
+		Process p;
+		try {
+			p = Runtime.getRuntime().exec(command);
+			p.waitFor();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				System.out.println(line);
+				
+				out.append(line + "\n");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	// =========================================
 	// Mothur Functions
 	// =========================================
-
 	
+	
+	//./mothur "#unique.seqs(fasta=/Volumes/Work/BioProj/fastq/CakeFiles/02_FASTA.fasta);"
+	// "\"Hello\""
+	
+	public String uniquify() {
+		
+		 String end = System.getProperty("line.separator");
+		
+		
+		return mothurDir + "/mothur "  
+						+ "-q set.dir(input="
+						+ outputDir   + ")" + end
+						+ "set.dir(output="
+						+ outputDir+ ")" + end
+						+ "unique.seqs(fasta=02_FASTA.fasta)" + end ;
+						
+		
+		
+		/*
+		 * //commandline mode
+		return 	mothurDir + "/mothur \"" +
+				"#unique.seqs(fasta=" + outputDir + "/02_FASTA.fasta);\"";
+		*/
+	}
+
 	// =========================================
 	// Private feilds
 	// =========================================

@@ -1,6 +1,7 @@
 package pipeline;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class PipelineDemo {
 public static void main(String[] args) {
@@ -12,17 +13,31 @@ public static void main(String[] args) {
 	File out = new File("/Volumes/Work/BioProj/fastq");
 	// these directories will be saved onto a local file so they will not need to be specified each time
 	File bbToolDir = new File("/Users/Joe/BioApps/bbmap");
-	File mothurDir = new File("this wont work");
+	File mothurDir = new File("/Users/Joe/BioApps/mothur");
 	
 	
 	// in the future bbToolDir and mothurDir should be stored in the save file
 	Commands com = new Commands(out, bbToolDir, mothurDir);
 	
+	sop("Starting Cake");
+	// merge
+	com.commandExecute(com.getMerge(in1, in2));
+	sop("Finished Merging");
 	
-	sop(com.getMerge(in1, in2));
-	sop(com.get16sTrim());
+	// trim
+	com.commandExecute(com.get16sTrim());
+	sop("Finished Trimming");
+	
+	// make fasta
 	com.makeFasta();
+	sop("Finished Fasta conversion");
 	
+	// uniquify
+	com.commandExecute((com.uniquify()));
+	sop(com.uniquify());
+	sop("Finished uniquify");
+	
+	sop("Finished All Test");
 	
 }
 
