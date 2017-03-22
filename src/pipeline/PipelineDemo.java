@@ -19,6 +19,11 @@ public static void main(String[] args) {
 	// in the future bbToolDir and mothurDir should be stored in the save file
 	Commands com = new Commands(out, bbToolDir, mothurDir);
 	
+
+
+	
+	
+	
 	sop("Starting Cake");
 	// merge
 	com.commandExecute(com.getMerge(in1, in2));
@@ -33,11 +38,12 @@ public static void main(String[] args) {
 	sop("Finished Fasta conversion");
 	
 	// uniquify
-	com.commandExecute((com.uniquify()));
-	sop(com.uniquify());
+	//com.commandExecute((com.uniquify()));
+	//sop(com.uniquify());
+	com.uniquify();
 	sop("Finished uniquify");
 	
-	sop("Finished All Test");
+//	sop("Finished All Test");
 	
 }
 
