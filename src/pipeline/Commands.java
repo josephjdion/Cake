@@ -10,13 +10,12 @@ import java.io.PrintWriter;
 
 import util.FastqReader;
 
-
 public class Commands {
 
 	// =========================================
 	// Constructors
 	// =========================================
-	
+
 	public Commands(File output, File BBtools, File Mothur) {
 		// As of now I am giving the outputDir a generic name.
 		// Bad idea for a naming convention given that this is going to be
@@ -24,9 +23,10 @@ public class Commands {
 		this.outputDir = new File(output.toString() + "/CakeFiles");
 		this.BBtoolsDir = BBtools;
 		this.mothurDir = Mothur;
+		
+		this.BBToolCom = new BBToolsCommands(this);
+		this.MothurScript = new MothurScripts(this);
 	}
-	
-	
 
 	// =========================================
 	// BBTools commands
@@ -34,13 +34,16 @@ public class Commands {
 
 	/**
 	 * This gets the merge command
-	 * @param fq1 First fastq you want to merge
-	 * @param fq2 Second fastq you want to merge
+	 * 
+	 * @param fq1
+	 *            First fastq you want to merge
+	 * @param fq2
+	 *            Second fastq you want to merge
 	 * @return returns the command for merge given the specified file name as a
 	 *         String
 	 */
 	public String getMerge(File fq1, File fq2) {
-		return String.format(MergeStr, BBtoolsDir, fq1, fq2, outputDir);
+		return BBToolCom.getMergeStr(fq1, fq2);
 	}
 
 	/**
@@ -61,15 +64,13 @@ public class Commands {
 	}
 
 	/**
-	 * Actually returns the command
-	 * 
-	 * @param qual
-	 *            What quality to use 16s or 18s
+	 * Given the specified quality by the method caller, return proper Trim command (16s or 18s)
+	 * @param qual What quality to use 16s or 18s
 	 * @return
 	 */
 	private String getTrim(int qual) {
 		// BBTools Directory, output folder, output folder, trim quality, length
-		return String.format(TrimStr, BBtoolsDir, outputDir, outputDir, qual, length);
+		return BBToolCom.getTrimStr(qual, this.length);
 	}
 
 	// =========================================
@@ -95,49 +96,44 @@ public class Commands {
 
 	/**
 	 * This executes a string into the console.
+	 * 
 	 * @param command
 	 */
 	public void commandExecute(String command) {
-		
-		System.out.println(command);
-		
+
+		//System.out.println(command);
+
 		try {
 			Process p = Runtime.getRuntime().exec(command);
-				p.waitFor();
-		
+			p.waitFor();
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		/*
-		StringBuffer out = new StringBuffer();
-		Process p;
-		try {
-			p = Runtime.getRuntime().exec(command);
-			p.waitFor();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			String line = "";
-			while ((line = reader.readLine()) != null) {
-				out.append(line + "\n");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
+		 * StringBuffer out = new StringBuffer(); Process p; try { p =
+		 * Runtime.getRuntime().exec(command); p.waitFor(); BufferedReader
+		 * reader = new BufferedReader(new
+		 * InputStreamReader(p.getInputStream())); String line = ""; while
+		 * ((line = reader.readLine()) != null) { out.append(line + "\n"); } }
+		 * catch (Exception e) { e.printStackTrace(); }
+		 */
 	}
-	
+
 	/**
 	 * This gets the base name of the two input files
-	 * @param in1 This is the file from where the base will be derived from
+	 * 
+	 * @param in1
+	 *            This is the file from where the base will be derived from
 	 * @return Returns the base of the string
 	 */
-	private String getBase(String in1)
-	{
+	private String getBase(String in1) {
 		String returnStr = "";
-		
-		for(int i = 0; i < in1.length(); i++)
-		{
+
+		for (int i = 0; i < in1.length(); i++) {
 			String str = in1.substring(i, i);
-			if(str.equals("_"))
+			if (str.equals("_"))
 				break;
 			returnStr.concat(str);
 		}
@@ -153,55 +149,40 @@ public class Commands {
 	// "\"Hello\""
 
 	public void uniquify() {
+		
+		createAndExecuteBatch(this.MothurScript.getUniquifyStr());
 
-		//String end = System.getProperty("line.separator");
-	
-		createAndExecuteBatch(String.format(this.UniquifyStr, outputDir, outputDir));
-
-		// steps write batch file to mothur file
-		// execute that batch file via terminal
-		// delete the batch file
-		// delete the log file
-
-		/*
-		 * return mothurDir + "/mothur " + "-q set.dir(input=" + outputDir + ")"
-		 * + end + "set.dir(output=" + outputDir+ ")" + end +
-		 * "unique.seqs(fasta=02_FASTA.fasta)" + end ;
-		 */
-		/*
-		 * //commandline mode return mothurDir + "/mothur \"" +
-		 * "#unique.seqs(fasta=" + outputDir + "/02_FASTA.fasta);\"";
-		 */
 	}
 	// =========================================
 	// Mothur's Helpers
 	// =========================================
-	
+
 	/**
 	 * This puts all the mothur helpers together
+	 * 
 	 * @param toWrite
 	 */
-	private void createAndExecuteBatch(String toWrite)
-	{
+	private void createAndExecuteBatch(String toWrite) {
 		createBatchFile(toWrite);
 		executeBatch();
-		//deleteBatch();
+		 //deleteBatch();
 	}
-	
+
 	/**
 	 * This creates a batch file to do what we want
-	 * @param toWrite What do we want to print in the
+	 * 
+	 * @param toWrite
+	 *            What do we want to print in the
 	 */
 	private void createBatchFile(String toWrite) {
-		
+
 		File file = new File(mothurDir + "/MyBatch");
 		FileWriter fw;
-		
 
 		try {
 			file.createNewFile();
 			fw = new FileWriter(file);
-			
+
 			fw.write(toWrite);
 			fw.flush();
 			fw.close();
@@ -209,65 +190,36 @@ public class Commands {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Executes generic batch file
 	 */
 	private void executeBatch() {
-		commandExecute(String.format(ExecuteBatch, mothurDir, mothurDir));
-
-		/*
-			try {
-				Process p = Runtime.getRuntime().exec(String.format(ExecuteBatch, mothurDir,mothurDir));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
-			
+		commandExecute(MothurScript.getExecuteBatchStr());
 	}
 
 	/**
 	 * Deletes the generic batch file
 	 */
 	private void deleteBatch() {
-		commandExecute(String.format(DeleteBatch, mothurDir));
+		commandExecute(MothurScript.getDeleteStr());
 	}
-	
 
 	// =========================================
-	// Private Fields
+	// Fields
 	// =========================================
-	private File BBtoolsDir;
-	private File outputDir;
-	private File mothurDir;
+	protected File BBtoolsDir;
+	protected File outputDir;
+	protected File mothurDir;
 
-	private int quality16s = 35;
-	private int quality18s = 160;
-	private int length = 225;
-	// =========================================
-	// BBTool Strings
-	// =========================================
+	protected int quality16s = 35;
+	protected int quality18s = 160;
+	protected int length = 225;
+	
+	private BBToolsCommands BBToolCom;
+	private MothurScripts MothurScript;
 
-	// BBTools Directory, In1, In2, output directory
-	private  String MergeStr = "%s/bbmerge.sh in1=%s in2=%s out=%s/00_MERGED.fastq";
-	// BBTools Directory, output folder, output folder, trim quality, length
-	private  String TrimStr = "%s/bbduk.sh in=%s/00_MERGED.fastq out=%s/01_TRIMMED.fastq qtrim=rl trimq=%s minlen=%s";
 	
-	// =========================================
-	// Mothur Batch Strings
-	// =========================================
-	
-	// output dir, output dir
-	private  String UniquifyStr = "set.dir(%s)\nset.dir(output=%s)\nunique.seqs(fasta=02_FASTA.fasta)";
-	
-	// Executes the generic batch file
-	// mohtur dir, mothur dir
-	private  String ExecuteBatch = "%s/mothur %s/MyBatch";
-	
-	// Delete the generic batch file
-	// mothur dir
-	private  String DeleteBatch = "rm %s/MyBatch";
-			
 
 	// =========================================
 	// Boring Setters
