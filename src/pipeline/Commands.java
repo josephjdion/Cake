@@ -7,23 +7,40 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import util.FastqReader;
 
+/**
+ * Commands is the connecting class for environment info, input, scripts to be
+ * used, and bash commands to be used. It takes the commands stored in
+ * MothurScripts and BBToolsCommands and utilizes them here.
+ * 
+ * @author Joe
+ *
+ */
 public class Commands {
 
 	// =========================================
 	// Constructors
 	// =========================================
 
-	public Commands(File output, File BBtools, File Mothur) {
-		// As of now I am giving the outputDir a generic name.
-		// Bad idea for a naming convention given that this is going to be
-		// called with multiple files in the same directory
-		this.outputDir = new File(output.toString() + "/CakeFiles");
-		this.BBtoolsDir = BBtools;
-		this.mothurDir = Mothur;
-		
+	/**
+	 * 
+	 * @param EI
+	 *            This is used to determine the install directories of several
+	 *            important programs
+	 * @param FastqPair
+	 *            The pair of fastqs to be used
+	 */
+	public Commands(EnviromentInfo EI, ArrayList<File> FastqPair) {
+
+		this.setOutputFolder(FastqPair.get(0));
+
+		this.BBtoolsDir = EI.getBBToolsDir();
+		this.mothurDir = EI.getMothurDir();
+		this.FastqFiles = FastqPair;
+
 		this.BBToolCom = new BBToolsCommands(this);
 		this.MothurScript = new MothurScripts(this);
 	}
@@ -47,7 +64,16 @@ public class Commands {
 	}
 
 	/**
-	 * Gets
+	 * This gets the merge command using the fastq files in FastqFiles
+	 * 
+	 * @return returns the command for merge given the specified file name as a
+	 *         String
+	 */
+	public String getMerge() {
+		return BBToolCom.getMergeStr(this.FastqFiles.get(0), this.FastqFiles.get(1));
+	}
+
+	/**
 	 * 
 	 * @return returns a 16s trim of a file command as a string
 	 */
@@ -64,8 +90,11 @@ public class Commands {
 	}
 
 	/**
-	 * Given the specified quality by the method caller, return proper Trim command (16s or 18s)
-	 * @param qual What quality to use 16s or 18s
+	 * Given the specified quality by the method caller, return proper Trim
+	 * command (16s or 18s)
+	 * 
+	 * @param qual
+	 *            What quality to use 16s or 18s
 	 * @return
 	 */
 	private String getTrim(int qual) {
@@ -101,41 +130,34 @@ public class Commands {
 	 */
 	public void commandExecute(String command) {
 
-		//System.out.println(command);
+		// System.out.println(command);
 
 		try {
 			Process p = Runtime.getRuntime().exec(command);
+
+			// p.waitFor();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			while ((reader.readLine()) != null) {
+			}
 			p.waitFor();
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		 * StringBuffer out = new StringBuffer(); Process p; try { p =
-		 * Runtime.getRuntime().exec(command); p.waitFor(); BufferedReader
-		 * reader = new BufferedReader(new
-		 * InputStreamReader(p.getInputStream())); String line = ""; while
-		 * ((line = reader.readLine()) != null) { out.append(line + "\n"); } }
-		 * catch (Exception e) { e.printStackTrace(); }
-		 */
 	}
 
-	/**
-	 * This gets the base name of the two input files
-	 * 
-	 * @param in1
-	 *            This is the file from where the base will be derived from
-	 * @return Returns the base of the string
-	 */
-	private String getBase(String in1) {
-		String returnStr = "";
+	private void setOutputFolder(File file) {
+		this.outputDir = new File(file.getParentFile().getAbsolutePath() + "/" + this.trimName(file.getName()));
+	}
 
-		for (int i = 0; i < in1.length(); i++) {
-			String str = in1.substring(i, i);
-			if (str.equals("_"))
+	private String trimName(String str) {
+		String returnStr = "";
+		for (int i = 0; i < str.length(); i++) {
+			if (str.charAt(i) == '_')
 				break;
-			returnStr.concat(str);
+			else
+				returnStr += str.charAt(i);
 		}
 		return returnStr;
 	}
@@ -144,14 +166,13 @@ public class Commands {
 	// Mothur Functions
 	// =========================================
 
-	// ./mothur
-	// "#unique.seqs(fasta=/Volumes/Work/BioProj/fastq/CakeFiles/02_FASTA.fasta);"
-	// "\"Hello\""
-
 	public void uniquify() {
-		
-		createAndExecuteBatch(this.MothurScript.getUniquifyStr());
 
+		createAndExecuteBatch(this.MothurScript.getUniquifyStr());
+	}
+
+	public void classify() {
+		createAndExecuteBatch(this.MothurScript.getClassify());
 	}
 	// =========================================
 	// Mothur's Helpers
@@ -165,7 +186,7 @@ public class Commands {
 	private void createAndExecuteBatch(String toWrite) {
 		createBatchFile(toWrite);
 		executeBatch();
-		 //deleteBatch();
+		// deleteBatch();
 	}
 
 	/**
@@ -215,11 +236,12 @@ public class Commands {
 	protected int quality16s = 35;
 	protected int quality18s = 160;
 	protected int length = 225;
-	
+
+	private String baseName;
+
 	private BBToolsCommands BBToolCom;
 	private MothurScripts MothurScript;
-
-	
+	private ArrayList<File> FastqFiles;
 
 	// =========================================
 	// Boring Setters
