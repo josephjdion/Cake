@@ -10,55 +10,27 @@ import java.io.File;
  *
  */
 public class BBToolsCommands {
-
-	// =========================================
-	// Fields
-	// =========================================
-
 	private Commands com;
-
-	// =========================================
-	// Constructors
-	// =========================================
+	private File BBToolsDir;
+	private File OutputDir;
 
 	public BBToolsCommands(Commands Com) {
-		this.com = Com;
+		this.BBToolsDir = com.getBBToolsDir();
+		this.OutputDir = com.getOutputDir();
 	}
 
-	// =========================================
-	// BBTool String getters
-	// =========================================
-
-	/**
-	 * This gives a properly formatted merge command
-	 * 
-	 * @param in1
-	 *            First file to be merged
-	 * @param in2
-	 *            Second file to be merged
-	 * @return Merge command
-	 */
-	protected String getMergeStr(File in1, File in2) {
+	protected String getMergeCommandStr(File fastq1, File fastq2) {
 		// BBTools Directory, In1, In2, output directory
-		return String.format(MergeStr, com.BBtoolsDir, in1, in2, com.outputDir);
+		return String.format(MergeStr, BBToolsDir, fastq1, fastq2, OutputDir);
 	}
 
-	/**
-	 * Gives trim command
-	 * 
-	 * @param quality
-	 *            The quality needed for the trimming
-	 * @param minLength
-	 *            The minimum acceptible length for the trimming
-	 * @return Trim command
-	 */
-	protected String getTrimStr(int quality, int minLength) {
+	protected String getTrimCommandStr(int quality, int minLength) {
 		// BBTools Directory, output folder, output folder, trim quality, length
-		return String.format(TrimStr, com.BBtoolsDir, com.outputDir, quality, minLength);
+		return String.format(TrimStr, BBToolsDir, OutputDir, quality, minLength);
 	}
-
+	
 	// =========================================
-	// Final Static Strings
+	// Final Static Strings (Scripts)
 	// =========================================
 
 	// BBTools Directory, output folder, output folder, trim quality, length

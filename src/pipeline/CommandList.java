@@ -1,25 +1,25 @@
 package pipeline;
 /**
- * This is used to store the various sequence of commands for analysis
+ * This is used to store the various sequences of commands for analysis
  * @author Joe
  *
  */
 public class CommandList {
 	
 	/**
-	 * Currently the only process used 
-	 * @param com Uses existing commands class.
+	 * Currently the only process used
+	 * @param com 
 	 */
 	public static void executeStandardAnalysis(Commands com)
 	{
 		sop("Starting Cake");
 		
 		// merge
-		com.commandExecute(com.getMerge());
+		com.executeCommand(com.getMergeCommand());
 		sop("Finished Merging");
 		
 		// trim
-		com.commandExecute(com.get16sTrim());
+		com.executeCommand(com.get16sTrim());
 		sop("Finished Trimming");
 		
 		// make fasta

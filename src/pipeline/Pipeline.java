@@ -20,11 +20,6 @@ import java.util.stream.*;
  same pipeline, but probably not until some time has passed and we've all forgotted what the
  code does. So plentiful comments and beautiful formatting. Also, the code might get distributed,
  so we have to be proud of it.
- 
- 
- 
- 
- 
  */
 
 public class Pipeline

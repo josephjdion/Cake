@@ -13,16 +13,13 @@ import java.util.Scanner;
  *
  */
 public class Cake {
-
-	public static void main(String[] args) {
-		Cake c = new Cake();
-
-		c.setup();
-		c.com = new Commands(c.EI, c.files);
-		CommandList.executeStandardAnalysis(c.com);
-
-	}
-
+	private Scanner scanner = new Scanner(System.in);
+	private Commands com;
+	private EnviromentInfo EI;
+	private ArrayList<File> files = new ArrayList<File>();
+	/**
+	 * Sets up the environment conditions and specify fastq files
+	 */
 	private void setup() {
 		sop("Welcome to cake setup");
 
@@ -41,7 +38,6 @@ public class Cake {
 		this.EI = new EnviromentInfo(bbToolsDir, mothurDir);
 		this.files.add(fq1);
 		this.files.add(fq2);
-
 	}
 
 	private static void sop(String str) {
@@ -52,10 +48,13 @@ public class Cake {
 	private String sin() {
 		return scanner.nextLine();
 	}
+	
+	// Main entry point for simplified application
+	public static void main(String[] args) {
+		Cake c = new Cake();
+		c.setup();
+		c.com = new Commands(c.EI, c.files);
+		CommandList.executeStandardAnalysis(c.com);
 
-	private Scanner scanner = new Scanner(System.in);
-	Commands com;
-	EnviromentInfo EI;
-	ArrayList<File> files = new ArrayList<File>();
-
+	}
 }
