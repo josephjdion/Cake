@@ -50,11 +50,12 @@ public class Cake {
 	}
 	
 	// Main entry point for simplified application
+	/*
 	public static void main(String[] args) {
 		Cake c = new Cake();
 		c.setup();
 		c.com = new Commands(c.EI, c.files);
 		CommandList.executeStandardAnalysis(c.com);
 
-	}
+	}*/
 }

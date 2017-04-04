@@ -70,16 +70,78 @@ public class Pipeline
 	
 	void execute()
 	{
+		
+		ArrayList<File> fqFiles =  new ArrayList<File>();
+		
+		// popululate fqFiles
 		Arrays.stream(inputDirf.list())
 			.filter(fname -> fname.endsWith(".fastq"))
 			.map(fname -> new File(inputDirf, fname))
-			.forEach(fastq -> execute(fastq));
+			.forEach(fastq -> fqFiles.add(fastq));
+			//.forEach(fastq -> execute(fastq))
+		
+		// take all the fqs and put them into matching pairs
+		ArrayList<FastqPair> pairs = makePairs(fqFiles);
+		
+		// for each pair execute the command on them
+		pairs.stream()
+			.forEach(fastqPair -> execute(fastqPair));
+		
+		// sort fqfileNames
+		
+	}
+	
+	/**
+	 * This is a horribly ugly algorithm that pairs files together in a given directory
+	 * @param filesToPair
+	 * @return
+	 */
+	private ArrayList<FastqPair> makePairs(ArrayList<File> filesToPair) {
+		ArrayList<FastqPair> returnArray = new ArrayList<FastqPair>();
+		int size = filesToPair.size();
+		// get file to check first
+		for (int i = 0; i < size; i++) {
+			ArrayList<File> initialPair = new ArrayList<File>();
+			initialPair.add(filesToPair.get(i));
+			String baseName = getBaseName(filesToPair.get(i));
+			// then find a matching file in the remaining arraylist;
+			for (int j = i+1; j < size; j++) {
+				File fileToCheck = filesToPair.get(j);
+				if(getBaseName(fileToCheck).equals(baseName))
+				{
+					initialPair.add(fileToCheck);
+					returnArray.add(new FastqPair(initialPair));
+					break;
+				}
+			}
+		}
+		return returnArray;
+	}
+	
+	private String getBaseName(File f) {
+		String fq1 = f.getName();
+		String[] elements = fq1.split("_");
+		return elements[0];
+	}
+	
+	private void execute(FastqPair pair)
+	{
+		EnviromentInfo EI = new EnviromentInfo(new File("/Users/Joe/BioApps/bbmap"),
+				new File("/Users/Joe/BioApps/mothur"));
+		
+		Commands com = new Commands(EI, pair);
+		CommandList.executeStandardAnalysis(com);
 	}
 	
 	
 	// This method can't throw any checked exceptions because it will be called in a stream.
 	private void execute(File fastq)
 	{
+		
+		
+		
+		
+		
 		/*
 		 * 1st several steps use bbtools. See http://jgi.doe.gov/data-and-tools/bbtools/
 		 * for download info. Later steps use mothur. See https://mothur.org.
@@ -125,4 +187,18 @@ classify.seqs(fasta=04_UNIQUE.fasta,taxonomy=silva.nr_v123.tax, reference=silva.
 		
 		 */
 	}
+	
+	
+	private static void sop(Object obj){System.out.println(obj);}
+	
+	// Tester fields
+ 
+	
+	
+	public static void main(String[] args) {
+		Pipeline p = new Pipeline(new File("/Volumes/32GB/fastq"));
+		p.execute();
+
+	}
+	
 }

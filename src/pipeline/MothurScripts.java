@@ -18,8 +18,9 @@ public class MothurScripts {
 	private File OutputDir;
 
 	public MothurScripts(Commands Com) {
-		this.OutputDir = com.getOutputDir();
-		this.MothurDir = com.getMothurDir();
+		
+		this.OutputDir = Com.getOutputDir();
+		this.MothurDir = Com.getMothurDir();
 	}
 
 	protected String getUniquifyBatchScript() {

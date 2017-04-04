@@ -20,21 +20,20 @@ import util.FastqReader;
  *
  */
 public class Commands {
-	
 	private File BBtoolsDir;
 	private File outputDir;
 	private File mothurDir;
 
-	private int quality16s = 35;
-	private int quality18s = 160;
-	private int length = 225;
+	private int quality = 35;
+	private int length16s = 225;
+	private int length18s = 160;
 
 	private String baseName;
 
 	private BBToolsCommands BBToolCom;
 	private MothurScripts MothurScript;
-	private ArrayList<File> FastqFiles;
 
+	private FastqPair fastqPair;
 	/**
 	 * 
 	 * @param EI
@@ -43,14 +42,13 @@ public class Commands {
 	 * @param FastqPair
 	 *            The pair of fastqs to be used
 	 */
-	public Commands(EnviromentInfo EI, ArrayList<File> FastqPair) {
+	public Commands(EnviromentInfo EI, FastqPair fastqPair) {
 
-		this.setOutputFolder(FastqPair.get(0));
 
 		this.BBtoolsDir = EI.getBBToolsDir();
 		this.mothurDir = EI.getMothurDir();
-		this.FastqFiles = FastqPair;
-
+		this.fastqPair = fastqPair;
+		this.setOutputFolder(this.fastqPair.getFiles().get(0));
 		this.BBToolCom = new BBToolsCommands(this);
 		this.MothurScript = new MothurScripts(this);
 	}
@@ -58,26 +56,31 @@ public class Commands {
 	// =========================================
 	// BBTools commands
 	// =========================================
-
 	public String getMergeCommand() {
-		File fastq1 = this.FastqFiles.get(0);
-		File fastq2 = this.FastqFiles.get(1);
+		File fastq1 = this.fastqPair.getFiles().get(0);
+		File fastq2 = this.fastqPair.getFiles().get(1);
 		return BBToolCom.getMergeCommandStr(fastq1, fastq2);
+	}
+	
+	public void getTrim() {
+		if (fastqPair.is16S())
+			executeCommand(get16sTrim());
+		else
+			executeCommand(get18sTrim());
 	}
 
 	/**
 	 * @return returns a 16s trim of a file command as a string
 	 */
-	public String get16sTrim() {
-		return getTrimCommand(quality16s);
+	private String get16sTrim() {
+		return getTrimCommand(length16s);
 	}
 
 	/**
-	 * 
 	 * @return returns a 18s trim of a file command as a string
 	 */
-	public String get18sTrim() {
-		return getTrimCommand(quality18s);
+	private String get18sTrim() {
+		return getTrimCommand(length18s);
 	}
 
 	/**
@@ -85,9 +88,9 @@ public class Commands {
 	 * command (16s or 18s)
 	 * @return
 	 */
-	private String getTrimCommand(int quality) {
+	private String getTrimCommand(int length) {
 		// BBTools Directory, output folder, output folder, trim quality, length
-		return BBToolCom.getTrimCommandStr(quality, this.length);
+		return BBToolCom.getTrimCommandStr(quality, length);
 	}
 	/**
 	 * Converts the fastq File in the output folder to fasta
@@ -105,8 +108,7 @@ public class Commands {
 	}
 
 	/**
-	 * This executes a command  into the console.
-	 * 
+	 * This executes a bash command into the console.
 	 * @param command
 	 */
 	public void executeCommand(String command) {
@@ -144,7 +146,6 @@ public class Commands {
 	// =========================================
 	// Mothur Functions
 	// =========================================
-
 	public void uniquify() {
 
 		createAndExecuteBatch(this.MothurScript.getUniquifyBatchScript());

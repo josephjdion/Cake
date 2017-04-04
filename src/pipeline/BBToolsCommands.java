@@ -10,13 +10,12 @@ import java.io.File;
  *
  */
 public class BBToolsCommands {
-	private Commands com;
 	private File BBToolsDir;
 	private File OutputDir;
 
 	public BBToolsCommands(Commands Com) {
-		this.BBToolsDir = com.getBBToolsDir();
-		this.OutputDir = com.getOutputDir();
+		this.BBToolsDir = Com.getBBToolsDir();
+		this.OutputDir = Com.getOutputDir();
 	}
 
 	protected String getMergeCommandStr(File fastq1, File fastq2) {
@@ -28,7 +27,7 @@ public class BBToolsCommands {
 		// BBTools Directory, output folder, output folder, trim quality, length
 		return String.format(TrimStr, BBToolsDir, OutputDir, quality, minLength);
 	}
-	
+
 	// =========================================
 	// Final Static Strings (Scripts)
 	// =========================================

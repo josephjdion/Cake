@@ -19,7 +19,7 @@ public class CommandList {
 		sop("Finished Merging");
 		
 		// trim
-		com.executeCommand(com.get16sTrim());
+		com.getTrim();
 		sop("Finished Trimming");
 		
 		// make fasta
@@ -27,11 +27,11 @@ public class CommandList {
 		sop("Finished Fasta conversion");
 		
 		// uniquify
-		com.uniquify();
+		//com.uniquify();
 		sop("Finished uniquify");
 		
 		// clasify
-		com.classify();
+		//com.classify();
 		sop("Finished classify");
 		
 		sop("Finished All Test");
