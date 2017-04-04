@@ -185,16 +185,16 @@ public class Commands {
 		executeCommand(MothurScript.getDeleteCommand());
 	}
 	
-	public void setQuality16s(int quality16s) {
-		this.quality16s = quality16s;
+	public void setQuality(int quality) {
+		this.quality = quality;
 	}
 
-	public void setQuality18s(int quality18s) {
-		this.quality18s = quality18s;
+	public void setLength8s(int length18s) {
+		this.length18s = length18s;
 	}
 
-	public void setLength(int length) {
-		this.length = length;
+	public void setLength(int length16s) {
+		this.length16s = length16s;
 	}
 	
 	public File getOutputDir()
