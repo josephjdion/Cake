@@ -1,0 +1,76 @@
+Mac version
+
+Using ReadLine
+
+Running 64Bit Version
+
+mothur v.1.39.5
+Last updated: 3/20/2017
+
+by
+Patrick D. Schloss
+
+Department of Microbiology & Immunology
+University of Michigan
+http://www.mothur.org
+
+When using, please cite:
+Schloss, P.D., et al., Introducing mothur: Open-source, platform-independent, community-supported software for describing and comparing microbial communities. Appl Environ Microbiol, 2009. 75(23):7537-41.
+
+Distributed under the GNU General Public License
+
+Type 'help()' for information on the commands that are available
+
+For questions and analysis support, please visit our forum at https://www.mothur.org/forum
+
+Type 'quit()' to exit program
+Batch Mode
+
+
+mothur > set.dir(/Volumes/Work/BioProj/fastq/TestS1L14)
+/Volumes/Work/BioProj/fastq/TestS1L14 is not a valid parameter.
+The valid parameters are: tempdefault, blastdir, debug, seed, modifynames, input, output, inputdir, and outputdir.
+[ERROR]: You must provide either an input, output, tempdefault, blastdir, debug or modifynames for the set.dir command.
+[ERROR]: did not complete set.dir.
+
+mothur > set.dir(output=/Volumes/Work/BioProj/fastq/TestS1L14)
+Mothur's directories:
+outputDir=/Volumes/Work/BioProj/fastq/TestS1L14/
+
+mothur > unique.seqs(fasta=02_FASTA.fasta)
+Unable to open 02_FASTA.fasta. Trying default /Users/Joe/BioApps/mothur/02_FASTA.fasta
+Unable to open /Users/Joe/BioApps/mothur/02_FASTA.fasta. Trying mothur's location /Users/Joe/BioApps/mothur/02_FASTA.fasta
+Unable to open /Users/Joe/BioApps/mothur/02_FASTA.fasta. Trying output directory /Volumes/Work/BioProj/fastq/TestS1L14/02_FASTA.fasta
+718931	376162
+
+Output File Names: 
+/Volumes/Work/BioProj/fastq/TestS1L14/02_FASTA.names
+/Volumes/Work/BioProj/fastq/TestS1L14/02_FASTA.unique.fasta
+
+[WARNING]: your sequence names contained ':'.  I changed them to '_' to avoid problems in your downstream analysis.
+
+mothur > system(mv /Volumes/Work/BioProj/fastq/TestS1L14/02_FASTA.names /Volumes/Work/BioProj/fastq/TestS1L14/03_NAMES.txt)
+
+
+mothur > system(mv /Volumes/Work/BioProj/fastq/TestS1L14/02_FASTA.unique.fasta /Volumes/Work/BioProj/fastq/TestS1L14/04_UNIQUE.fasta)
+
+
+mothur > quit()
+
+
+************************************************************
+************************************************************
+************************************************************
+Detected 2 [ERROR] messages, please review.
+************************************************************
+************************************************************
+************************************************************
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<^>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<^>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<^>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Detected 1 [WARNING] messages, please review.
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<^>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<^>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<^>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
