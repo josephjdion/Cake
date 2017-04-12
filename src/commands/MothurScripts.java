@@ -1,6 +1,8 @@
-package pipeline;
+package commands;
 
 import java.io.File;
+
+import pipeline.Commands;
 
 /**
  * As opposed to the terminal commands stored in BBToolsCommands, MothurScripts
@@ -27,7 +29,7 @@ public class MothurScripts {
 		return String.format(UniquifyBatchScript, OutputDir);
 	}
 
-	protected String getExecuteBatchCommand() {
+	public String getExecuteBatchCommand() {
 		// mohtur dir, mothur dir
 		return String.format(executeCommand, MothurDir);
 	}

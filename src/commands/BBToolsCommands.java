@@ -1,6 +1,8 @@
-package pipeline;
+package commands;
 
 import java.io.File;
+
+import pipeline.Commands;
 
 /**
  * This contains the commands BBTools needs given the input files specified by
