@@ -90,7 +90,7 @@ public class Pipeline
 		ArrayList<FastqPair> pairs = makePairs(fqFiles);
 		
 		// for each pair execute the command on them
-		pairs.stream()
+		pairs.parallelStream()
 			.forEach(fastqPair -> execute(fastqPair));
 		
 		// sort fqfileNames

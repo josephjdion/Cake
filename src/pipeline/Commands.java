@@ -53,9 +53,11 @@ public class Commands {
 		this.mothurDir = EI.getMothurDir();
 		this.fastqPair = fastqPair;
 		this.setOutputFolder(this.fastqPair.getFiles().get(0));
+		this.baseName = trimName(outputDir.getName());
 		this.bbTools = new BBToolsCommands(this);
 		this.mothur = new MothurScripts(this);
-		internal = new InternalCommands(this);
+		this.internal = new InternalCommands(this);
+
 	}
 
 	private void setOutputFolder(File file) {
@@ -111,6 +113,10 @@ public class Commands {
 
 	public int get18sLength() {
 		return this.length18s;
+	}
+	
+	public String getBaseName() {
+		return this.baseName;
 	}
 
 }

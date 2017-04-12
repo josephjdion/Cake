@@ -21,12 +21,14 @@ public class MothurScripts {
 	private File MothurDir;
 	private File OutputDir;
 	private File ExecutionDir;
+	private String baseName;
 
 	public MothurScripts(Commands Com) {
 		
 		this.OutputDir = Com.getOutputDir();
 		this.MothurDir = Com.getMothurDir();
 		this.ExecutionDir = new File (System.getProperty("user.dir"));
+		baseName = Com.getBaseName();
 	}
 
 	public void uniquify() {
@@ -45,7 +47,7 @@ public class MothurScripts {
 	private void executeBatch() {
 		String command =
 		// mohtur dir, mothur dir
-		String.format(executeCommand, MothurDir, ExecutionDir);
+		String.format(executeCommand, MothurDir, baseName);
 		CommandExec.exec(command);
 		
 	}
@@ -53,7 +55,7 @@ public class MothurScripts {
 	private void deleteBatch() {
 		String command = 
 		// mothur dir
-		String.format(deleteCommand, MothurDir);
+		String.format(deleteCommand, MothurDir, baseName);
 		CommandExec.exec(command);
 	}
 	
@@ -65,7 +67,7 @@ public class MothurScripts {
 	}
 
 	private void createBatchFile(String scriptToWrite) {
-		File file = new File(MothurDir + "/MyBatch");
+		File file = new File(MothurDir + "/MyBatch" + baseName);
 		FileWriter fw;
 		try {
 			file.createNewFile();
@@ -89,14 +91,14 @@ public class MothurScripts {
 	private final String deleteLogFile = "rm %s/*.logfile";
 	
 	// mothur dir
-	private final String deleteCommand = "rm %s/MyBatch";
+	private final String deleteCommand = "rm %s/MyBatch%2$s";
 	// mohtur dir, mothur dir
-	private final String executeCommand = "%1$s/mothur %1$s/MyBatch";
+	private final String executeCommand = "%1$s/mothur %1$s/MyBatch%2$s";
 	
 	// output dir, outputdir, execution dir
 	private final String UniquifyBatchScript = 
 			  "set.dir(%1$s)\n" + "set.dir(output=%1$s)\n"
-			+ "unique.seqs(fasta=02_FASTA.fasta)\n" + "system(mv %1$s/02_FASTA.names %1$s/03_NAMES.txt)\n"
+			+ "unique.seqs(fasta=02_FASTA.fasta)\n" + "system(mv %1$s/02_FASTA.names %1$s/03_NAMES.txt, " + "processors=8)\n"
 			+ "system(mv %1$s/02_FASTA.unique.fasta %1$s/04_UNIQUE.fasta)\n"
 			+ "system(" + String.format(deleteLogFile, ExecutionDir) + ")\n"
 			+ "system(rm %2$s/*.logfile)\n" ;
