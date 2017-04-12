@@ -1,5 +1,30 @@
 package commands;
 
-public class InternalCommands {
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
+import pipeline.Commands;
+import util.FastqReader;
+
+public class InternalCommands {
+	private File outputDir;
+	public InternalCommands(Commands com) {
+		outputDir = com.getOutputDir();
+	}
+	/**
+	 * Converts the fastq File in the output folder to fasta
+	 */
+	public void makeFasta() {
+		File outputFile = new File(outputDir.toString() + "/02_FASTA.fasta");
+		// The input file is dependent on what BBToolsCommands names the file
+		File inputFile = new File(outputDir.toString() + "/01_TRIMMED.fastq");
+		try {
+			FileReader fr = new FileReader(inputFile);
+			FastqReader fqr = new FastqReader(fr);
+			fqr.toFasta(outputFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

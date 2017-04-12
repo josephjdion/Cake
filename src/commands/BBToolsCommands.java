@@ -3,6 +3,7 @@ package commands;
 import java.io.File;
 
 import pipeline.Commands;
+import pipeline.FastqPair;
 
 /**
  * This contains the commands BBTools needs given the input files specified by
@@ -14,20 +15,43 @@ import pipeline.Commands;
 public class BBToolsCommands {
 	private File BBToolsDir;
 	private File OutputDir;
-
+	private FastqPair fastqPair;
+	private File fastq1;
+	private File fastq2;
+	private int quality;
+	private int length16s;
+	private int lenght18s;
+	
 	public BBToolsCommands(Commands Com) {
 		this.BBToolsDir = Com.getBBToolsDir();
 		this.OutputDir = Com.getOutputDir();
+		this.fastqPair = Com.getFastqPair();
+		this.fastq1 = fastqPair.getFiles().get(0);
+		this.fastq2 = fastqPair.getFiles().get(1);
+		this.length16s = Com.get16Length();
+		this.lenght18s = Com.get18sLength();
+		this.quality = Com.getQuality();
 	}
 
-	protected String getMergeCommandStr(File fastq1, File fastq2) {
+	public void merge() {
+		String command =
 		// BBTools Directory, In1, In2, output directory
-		return String.format(MergeStr, BBToolsDir, fastq1, fastq2, OutputDir);
+		String.format(MergeStr, BBToolsDir, fastq1, fastq2, OutputDir);
+		CommandExec.exec(command);
+	}
+	
+	public void trim() {
+		if(fastqPair.is16S())
+			Trim(length16s);
+		else
+			Trim(lenght18s);
 	}
 
-	protected String getTrimCommandStr(int quality, int minLength) {
+	private void Trim(int minLength) {
+		String command =
 		// BBTools Directory, output folder, output folder, trim quality, length
-		return String.format(TrimStr, BBToolsDir, OutputDir, quality, minLength);
+		String.format(TrimStr, BBToolsDir, OutputDir, quality, minLength);
+		CommandExec.exec(command);
 	}
 
 	// =========================================

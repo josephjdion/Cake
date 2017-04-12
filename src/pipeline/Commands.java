@@ -9,6 +9,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import commands.BBToolsCommands;
+import commands.InternalCommands;
+import commands.MothurScripts;
 import util.FastqReader;
 
 /**
@@ -30,10 +33,11 @@ public class Commands {
 
 	private String baseName;
 
-	private BBToolsCommands BBToolCom;
-	private MothurScripts MothurScript;
+	protected BBToolsCommands bbTools;
+	protected MothurScripts mothur;
+	protected FastqPair fastqPair;
+	protected InternalCommands internal;
 
-	private FastqPair fastqPair;
 	/**
 	 * 
 	 * @param EI
@@ -49,82 +53,9 @@ public class Commands {
 		this.mothurDir = EI.getMothurDir();
 		this.fastqPair = fastqPair;
 		this.setOutputFolder(this.fastqPair.getFiles().get(0));
-		this.BBToolCom = new BBToolsCommands(this);
-		this.MothurScript = new MothurScripts(this);
-	}
-
-	// =========================================
-	// BBTools commands
-	// =========================================
-	public String getMergeCommand() {
-		File fastq1 = this.fastqPair.getFiles().get(0);
-		File fastq2 = this.fastqPair.getFiles().get(1);
-		return BBToolCom.getMergeCommandStr(fastq1, fastq2);
-	}
-	
-	public void getTrim() {
-		if (fastqPair.is16S())
-			executeCommand(get16sTrim());
-		else
-			executeCommand(get18sTrim());
-	}
-
-	/**
-	 * @return returns a 16s trim of a file command as a string
-	 */
-	private String get16sTrim() {
-		return getTrimCommand(length16s);
-	}
-
-	/**
-	 * @return returns a 18s trim of a file command as a string
-	 */
-	private String get18sTrim() {
-		return getTrimCommand(length18s);
-	}
-
-	/**
-	 * Given the specified quality by the method caller, return proper Trim
-	 * command (16s or 18s)
-	 * @return
-	 */
-	private String getTrimCommand(int length) {
-		// BBTools Directory, output folder, output folder, trim quality, length
-		return BBToolCom.getTrimCommandStr(quality, length);
-	}
-	/**
-	 * Converts the fastq File in the output folder to fasta
-	 */
-	public void makeFasta() {
-		File outputFile = new File(outputDir.toString() + "/02_FASTA.fasta");
-		File inputFile = new File(outputDir.toString() + "/01_TRIMMED.fastq");
-		try {
-			FileReader fr = new FileReader(inputFile);
-			FastqReader fqr = new FastqReader(fr);
-			fqr.toFasta(outputFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * This executes a bash command into the console.
-	 * @param command
-	 */
-	public void executeCommand(String command) {
-		try {
-			Process p = Runtime.getRuntime().exec(command);
-
-			// p.waitFor();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			while ((reader.readLine()) != null) {
-			}
-			p.waitFor();
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.bbTools = new BBToolsCommands(this);
+		this.mothur = new MothurScripts(this);
+		internal = new InternalCommands(this);
 	}
 
 	private void setOutputFolder(File file) {
@@ -142,48 +73,6 @@ public class Commands {
 		return returnStr;
 	}
 
-	// =========================================
-	// Mothur Functions
-	// =========================================
-	public void uniquify() {
-
-		createAndExecuteBatch(this.MothurScript.getUniquifyBatchScript());
-	}
-
-	public void classify() {
-		createAndExecuteBatch(this.MothurScript.getClassifyBatchScript());
-	}
-	
-	private void createAndExecuteBatch(String toWrite) {
-		createBatchFile(toWrite);
-		executeBatch();
-		 deleteBatch();
-	}
-
-	private void createBatchFile(String scriptToWrite) {
-		File file = new File(mothurDir + "/MyBatch");
-		FileWriter fw;
-
-		try {
-			file.createNewFile();
-			fw = new FileWriter(file);
-
-			fw.write(scriptToWrite);
-			fw.flush();
-			fw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void executeBatch() {
-		executeCommand(MothurScript.getExecuteBatchCommand());
-	}
-
-	private void deleteBatch() {
-		executeCommand(MothurScript.getDeleteCommand());
-	}
-	
 	public void setQuality(int quality) {
 		this.quality = quality;
 	}
@@ -195,19 +84,33 @@ public class Commands {
 	public void setLength(int length16s) {
 		this.length16s = length16s;
 	}
-	
-	public File getOutputDir()
-	{
+
+	public File getOutputDir() {
 		return this.outputDir;
 	}
 
-	public File getBBToolsDir()
-	{
+	public File getBBToolsDir() {
 		return this.BBtoolsDir;
 	}
-	
-	public File getMothurDir()
-	{
+
+	public File getMothurDir() {
 		return this.mothurDir;
 	}
+
+	public FastqPair getFastqPair() {
+		return this.fastqPair;
+	}
+
+	public int getQuality() {
+		return this.quality;
+	}
+
+	public int get16Length() {
+		return this.length16s;
+	}
+
+	public int get18sLength() {
+		return this.length18s;
+	}
+
 }

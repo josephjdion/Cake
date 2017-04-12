@@ -1,6 +1,8 @@
 package commands;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import pipeline.Commands;
 
@@ -25,24 +27,57 @@ public class MothurScripts {
 		this.MothurDir = Com.getMothurDir();
 	}
 
-	protected String getUniquifyBatchScript() {
-		return String.format(UniquifyBatchScript, OutputDir);
+	public void uniquify() {
+		String script =
+		String.format(UniquifyBatchScript, OutputDir);
+		createAndExecuteBatch(script);
 	}
-
-	public String getExecuteBatchCommand() {
-		// mohtur dir, mothur dir
-		return String.format(executeCommand, MothurDir);
-	}
-
-	protected String getDeleteCommand() {
-		// mothur dir
-		return String.format(deleteCommand, MothurDir);
-	}
-
-	protected String getClassifyBatchScript() {
+	
+	public void classify() {
+		String script =
 		// output dir
-		return String.format(ClassifyBatchScript, OutputDir, MothurDir);
+		String.format(ClassifyBatchScript, OutputDir, MothurDir);
+		createAndExecuteBatch(script);
 	}
+
+	private void executeBatch() {
+		String command =
+		// mohtur dir, mothur dir
+		String.format(executeCommand, MothurDir);
+		CommandExec.exec(command);
+		
+	}
+
+	private void deleteBatch() {
+		String command = 
+		// mothur dir
+		String.format(deleteCommand, MothurDir);
+		CommandExec.exec(command);
+	}
+	
+	private void createAndExecuteBatch(String toWrite) {
+		createBatchFile(toWrite);
+		 executeBatch();
+		 deleteBatch();
+	}
+
+	private void createBatchFile(String scriptToWrite) {
+		File file = new File(MothurDir + "/MyBatch");
+		FileWriter fw;
+		try {
+			file.createNewFile();
+			fw = new FileWriter(file);
+			fw.write(scriptToWrite);
+			fw.flush();
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
+	
+	
 	// =========================================
 	// Mothur Scripts
 	// =========================================

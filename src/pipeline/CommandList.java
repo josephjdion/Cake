@@ -15,23 +15,23 @@ public class CommandList {
 		sop("Starting Cake");
 		
 		// merge
-		com.executeCommand(com.getMergeCommand());
+		com.bbTools.merge();
 		sop("Finished Merging");
 		
 		// trim
-		com.getTrim();
+		com.bbTools.trim();
 		sop("Finished Trimming");
 		
 		// make fasta
-		com.makeFasta();
+		com.internal.makeFasta();
 		sop("Finished Fasta conversion");
 		
 		// uniquify
-		com.uniquify();
+		com.mothur.uniquify();
 		sop("Finished uniquify");
 		
 		// clasify
-		com.classify();
+		com.mothur.classify();
 		sop("Finished classify");
 		
 		sop("Finished All Test");
