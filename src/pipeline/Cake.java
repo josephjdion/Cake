@@ -15,29 +15,18 @@ import java.util.Scanner;
 public class Cake {
 	private Scanner scanner = new Scanner(System.in);
 	private Commands com;
-	private EnviromentInfo EI;
+	private EnvironmentInfo EI;
 	private ArrayList<File> files = new ArrayList<File>();
+	private  File inputDir;
 	/**
 	 * Sets up the environment conditions and specify fastq files
 	 */
 	private void setup() {
 		sop("Welcome to cake setup");
-
-		sop("Please enter BBTools directory");
-		File bbToolsDir = new File(this.sin());
-
-		sop("Please enter mothur directory");
-		File mothurDir = new File(this.sin());
-
-		sop("Please enter first Fastq full path");
-		File fq1 = new File(this.sin());
-
-		sop("Please enter second Fastq full path");
-		File fq2 = new File((this.sin()));
-
-		this.EI = new EnviromentInfo(bbToolsDir, mothurDir);
-		this.files.add(fq1);
-		this.files.add(fq2);
+		SaveEnvironment save =  new SaveEnvironment();
+		EI = save.loadEnvironmentInfo();
+		sop("Please enter the directory containing the fastq files you wish to use: ");
+		inputDir = new File(sin());
 	}
 
 	private static void sop(String str) {
@@ -50,12 +39,12 @@ public class Cake {
 	}
 	
 	// Main entry point for simplified application
-	/*
+	
 	public static void main(String[] args) {
 		Cake c = new Cake();
 		c.setup();
-		c.com = new Commands(c.EI, c.files);
-		CommandList.executeStandardAnalysis(c.com);
+		Pipeline p = new Pipeline(c.inputDir, c.EI);
+		p.execute();
 
-	}*/
+	}
 }

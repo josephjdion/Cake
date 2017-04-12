@@ -24,6 +24,7 @@ import java.util.stream.*;
 
 public class Pipeline
 {
+	private static EnvironmentInfo EI;
 	private enum Phase
 	{
 		MERGED, TRIMMED, FASTA, NAMES, UNIQUE, TREE, TAXONOMY;
@@ -62,9 +63,10 @@ public class Pipeline
 	// The inputDirf contains paired-end fastq files. Pairs should have names that only
 	// differ in their suffixes: xxx_1.fastq goes with xxx_2.fastq.
 	//
-	Pipeline(File inputDirf)
+	Pipeline(File inputDirf, EnvironmentInfo ei)
 	{
 		this.inputDirf = inputDirf;
+		this.EI = ei;
 	}
 	
 	
@@ -126,9 +128,6 @@ public class Pipeline
 	
 	private void execute(FastqPair pair)
 	{
-		EnviromentInfo EI = new EnviromentInfo(new File("/Users/Joe/BioApps/bbmap"),
-				new File("/Users/Joe/BioApps/mothur"));
-		
 		Commands com = new Commands(EI, pair);
 		CommandList.executeStandardAnalysis(com);
 	}
@@ -193,12 +192,6 @@ classify.seqs(fasta=04_UNIQUE.fasta,taxonomy=silva.nr_v123.tax, reference=silva.
 	
 	// Tester fields
  
-	
-	
-	public static void main(String[] args) {
-		Pipeline p = new Pipeline(new File("/Volumes/32GB/fastq"));
-		p.execute();
 
-	}
 	
 }

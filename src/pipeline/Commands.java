@@ -42,7 +42,7 @@ public class Commands {
 	 * @param FastqPair
 	 *            The pair of fastqs to be used
 	 */
-	public Commands(EnviromentInfo EI, FastqPair fastqPair) {
+	public Commands(EnvironmentInfo EI, FastqPair fastqPair) {
 
 
 		this.BBtoolsDir = EI.getBBToolsDir();
@@ -112,7 +112,6 @@ public class Commands {
 	 * @param command
 	 */
 	public void executeCommand(String command) {
-
 		try {
 			Process p = Runtime.getRuntime().exec(command);
 
