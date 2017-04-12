@@ -20,30 +20,32 @@ public class MothurScripts {
 	private Commands com;
 	private File MothurDir;
 	private File OutputDir;
+	private File ExecutionDir;
 
 	public MothurScripts(Commands Com) {
 		
 		this.OutputDir = Com.getOutputDir();
 		this.MothurDir = Com.getMothurDir();
+		this.ExecutionDir = new File (System.getProperty("user.dir"));
 	}
 
 	public void uniquify() {
 		String script =
-		String.format(UniquifyBatchScript, OutputDir);
+		String.format(UniquifyBatchScript, OutputDir, ExecutionDir);
 		createAndExecuteBatch(script);
 	}
 	
 	public void classify() {
 		String script =
 		// output dir
-		String.format(ClassifyBatchScript, OutputDir, MothurDir);
+		String.format(ClassifyBatchScript, OutputDir, MothurDir, ExecutionDir);
 		createAndExecuteBatch(script);
 	}
 
 	private void executeBatch() {
 		String command =
 		// mohtur dir, mothur dir
-		String.format(executeCommand, MothurDir);
+		String.format(executeCommand, MothurDir, ExecutionDir);
 		CommandExec.exec(command);
 		
 	}
@@ -54,6 +56,7 @@ public class MothurScripts {
 		String.format(deleteCommand, MothurDir);
 		CommandExec.exec(command);
 	}
+	
 	
 	private void createAndExecuteBatch(String toWrite) {
 		createBatchFile(toWrite);
@@ -82,23 +85,29 @@ public class MothurScripts {
 	// Mothur Scripts
 	// =========================================
 	
-	// mothur dir
-	private static final String deleteCommand = "rm %s/MyBatch";
-	// mohtur dir, mothur dir
-	private static final String executeCommand = "%1$s/mothur %1$s/MyBatch";
+	// execution direction
+	private final String deleteLogFile = "rm %s/*.logfile";
 	
-	// output dir, output dir
-	private static final String UniquifyBatchScript = 
+	// mothur dir
+	private final String deleteCommand = "rm %s/MyBatch";
+	// mohtur dir, mothur dir
+	private final String executeCommand = "%1$s/mothur %1$s/MyBatch";
+	
+	// output dir, outputdir, execution dir
+	private final String UniquifyBatchScript = 
 			  "set.dir(%1$s)\n" + "set.dir(output=%1$s)\n"
 			+ "unique.seqs(fasta=02_FASTA.fasta)\n" + "system(mv %1$s/02_FASTA.names %1$s/03_NAMES.txt)\n"
-			+ "system(mv %1$s/02_FASTA.unique.fasta %1$s/04_UNIQUE.fasta)\n";
+			+ "system(mv %1$s/02_FASTA.unique.fasta %1$s/04_UNIQUE.fasta)\n"
+			+ "system(" + String.format(deleteLogFile, ExecutionDir) + ")\n"
+			+ "system(rm %2$s/*.logfile)\n" ;
 
-	// output dir, mothur dir
-	private static final String ClassifyBatchScript = 
+	// output dir, mothur dir, executionDir
+	private final String ClassifyBatchScript = 
 			  "set.dir(%1$s)\n" + "classify.seqs(fasta=%1$s/04_UNIQUE.fasta, "
 			+ "taxonomy=%2$s/silva.nr_v123.tax, " + "reference=%2$s/silva.nr_v123.align, " + "processors=8)\n"
 			+ "system(rm %1$s/04_UNIQUE.nr_v123.wang.flip.accnos)\n"
 			+ "system(mv %1$s/04_UNIQUE.nr_v123.wang.tax.summary %1$s/05_TREE.txt)\n"
-			+ "system(mv %1$s/04_UNIQUE.nr_v123.wang.taxonomy %1$s/6_TAXONOMY.txt)\n";
+			+ "system(mv %1$s/04_UNIQUE.nr_v123.wang.taxonomy %1$s/6_TAXONOMY.txt)\n"
+			+ "system(rm %2$s/*.logfile)\n" ;
 
 }

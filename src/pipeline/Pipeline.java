@@ -25,9 +25,9 @@ import java.util.stream.*;
 public class Pipeline
 {
 	private static EnvironmentInfo EI;
-	private enum Phase
+	public enum Phase
 	{
-		MERGED, TRIMMED, FASTA, NAMES, UNIQUE, TREE, TAXONOMY;
+		MERGED, TRIMMED, FASTA, NAMES, UNIQUE, TREE, TAXONOMY, DONE;
 		
 		public String toString()
 		{
@@ -36,6 +36,10 @@ public class Pipeline
 				s = '0' + s;
 			s += "_"  + name() + getFilenameExtension();
 			return s;
+		}
+		
+		public String getName() {
+			return this.name();
 		}
 		
 		private String getFilenameExtension()
@@ -129,62 +133,15 @@ public class Pipeline
 	private void execute(FastqPair pair)
 	{
 		Commands com = new Commands(EI, pair);
-		CommandList.executeStandardAnalysis(com);
+		CommandList comList = new CommandList();
+		comList.executeStandardAnalysis(com);
 	}
 	
 	
 	// This method can't throw any checked exceptions because it will be called in a stream.
 	private void execute(File fastq)
 	{
-		
-		
-		
-		
-		
-		/*
-		 * 1st several steps use bbtools. See http://jgi.doe.gov/data-and-tools/bbtools/
-		 * for download info. Later steps use mothur. See https://mothur.org.
-		 
-		 MERGED
-		 Merge each pair: For xxx_1.fastq and xxx_2.fastq, make a subdir in FastqDirs called xxx. Put
-		 merged output in FastqDirs/xxx/00_MERGED.fastq.
-		 
-bbmerge.sh in1=TestS1L14_16S_1.fastq in2=TestS1L14_16S_2.fastq out=FastqDirs/TestS1L14_16S/00_MERGED.fastq
-		  
-		  
-		 TRIMMED
-		 Trim to quality threshold = 35 and length = 225 for 16S, 160 for 18S. 
-bbduk.sh in=00_MERGED.fastq out=01_TRIMMED.fastq qtrim=rl trimq=35 minlen=225
-		Creates 01_TRIMMED.fastq.
-		 
-		 
-		 FASTA
-		 Convert fastq to fastq. Use toFasta() method of palmer.util.FastqReader.
-		 Creates 02_FASTA.fasta.
-		 
-		 
-		 UNIQUE		 
-		 Uniquify. Internal mothur command is 
-unique.seqs(fasta=02_FASTA.fasta)  
-		This creates 02_FASTA.names (which should be renamed 03_NAMES.txt), 
-		02_FASTA.unique.fasta (which should be renamed 04_UNIQUE.fasta), 
-		and a logfile called mothur.*.logfile (which should be deleted - all mothur
-		logs s/b deleted right after creation).
-		
-		TAXONOMY and TREE
-		Go to https://www.mothur.org/wiki/Silva_reference_files and click the "Full length 
-		sequences and taxonomy references" link neart the top of that page to download 
-		silva.nr_v123.align and silva.nr_v123.tax. Put them in the main mothur directory.
-		
-classify.seqs(fasta=04_UNIQUE.fasta,taxonomy=silva.nr_v123.tax, reference=silva.nr_v123.align)
-		Starts up, says "Generating search database..." done in 6 mins, used ~20G of disk. 
-		Then a few more minutes of misc processing. Builds some big files in mother dir, so
-		hopefully it's only slow the first time. Creates 04_UNIQUE.nr_v123.wang.flip.accnos
-		(probably s/b deleted), 04_UNIQUE.nr_v123.wang.tax.summary (s/b renamed 05_TREE.txt), 
-		and 04_UNIQUE.nr_v123.wang.taxonomy (rename 06_TAXONOMY.txt). Don't worry about messages that
-		say "Unable to open ..." if mothur keeps running.
-		
-		 */
+	
 	}
 	
 	
