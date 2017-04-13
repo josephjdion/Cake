@@ -13,22 +13,19 @@ public class CommandExec {
 		 * @return Text output
 		 */
 		 public static String exec(String command) {
-				StringBuffer output = new StringBuffer();
-				Process p;
-				try {
-					p = Runtime.getRuntime().exec(command);
-					p.waitFor();
-					BufferedReader reader =
-		            new BufferedReader(new InputStreamReader(p.getInputStream()));
-					String line = "";
-					while ((line = reader.readLine())!= null) {
-						output.append(line + "\n");
-					}
+			 try {
+					Process p = Runtime.getRuntime().exec(command);
 
+					// p.waitFor();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					while ((reader.readLine()) != null) {
+					}
+					p.waitFor();
+					
 				} catch (Exception e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				System.out.println(output.toString());
-				return output.toString();
+			 return "Return text currently no implemented";
 			}
 }
