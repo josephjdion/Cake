@@ -27,16 +27,20 @@ public class Commands {
 	private File outputDir;
 	private File mothurDir;
 
+	private String baseName;
+	protected FastqPair fastqPair;
+	
 	private int quality = 35;
 	private int length16s = 225;
 	private int length18s = 160;
 
-	private String baseName;
-
+	// Instances to run further commands off of
 	protected BBToolsCommands bbTools;
 	protected MothurScripts mothur;
-	protected FastqPair fastqPair;
 	protected InternalCommands internal;
+	
+	private String numOfProcessors;
+	private String silvaRefVersion;
 
 	/**
 	 * 
@@ -47,30 +51,41 @@ public class Commands {
 	 *            The pair of fastqs to be used
 	 */
 	public Commands(EnvironmentInfo EI, FastqPair fastqPair) {
-
-
 		this.BBtoolsDir = EI.getBBToolsDir();
 		this.mothurDir = EI.getMothurDir();
 		this.fastqPair = fastqPair;
-		this.setOutputFolder(this.fastqPair.getFiles().get(0));
+		this.setOutputFolder(this.fastqPair);
 		this.baseName = trimName(outputDir.getName());
+		this.numOfProcessors = "" + EI.getNumOfProcessors();
+		this.silvaRefVersion = "" + EI.getSilvaVersion();
+		// Initiate these three last
 		this.bbTools = new BBToolsCommands(this);
 		this.mothur = new MothurScripts(this);
 		this.internal = new InternalCommands(this);
 
 	}
-
-	private void setOutputFolder(File file) {
+	
+	/**
+	 * Sets the output folder for this class 
+	 * @param file the file
+	 */
+	private void setOutputFolder(FastqPair fastqPair) {
+		File file = fastqPair.getFiles().get(0);
 		this.outputDir = new File(file.getParentFile().getAbsolutePath() + "/" + this.trimName(file.getName()));
 	}
-
-	private String trimName(String str) {
+	/**
+	 * Given a base name of a certain file it will trim the excess 
+	 * off of the file
+	 * @param fileName
+	 * @return
+	 */
+	private String trimName(String fileName) {
 		String returnStr = "";
-		for (int i = 0; i < str.length(); i++) {
-			if (str.charAt(i) == '_')
+		for (int i = 0; i < fileName.length(); i++) {
+			if (fileName.charAt(i) == '_')
 				break;
 			else
-				returnStr += str.charAt(i);
+				returnStr += fileName.charAt(i);
 		}
 		return returnStr;
 	}
@@ -117,6 +132,14 @@ public class Commands {
 	
 	public String getBaseName() {
 		return this.baseName;
+	}
+	
+	public String getNumOfNumOfProcessors() {
+		return this.numOfProcessors;
+	}
+	
+	public String getSilvaVer() {
+		return this.silvaRefVersion;
 	}
 
 }

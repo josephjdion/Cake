@@ -21,86 +21,48 @@ import java.util.stream.*;
  code does. So plentiful comments and beautiful formatting. Also, the code might get distributed,
  so we have to be proud of it.
  */
-
+/**
+ * 
+ * @author Joe
+ *
+ */
 public class Pipeline
 {
 	private static EnvironmentInfo EI;
-	public enum Phase
-	{
-		MERGED, TRIMMED, FASTA, NAMES, UNIQUE, TREE, TAXONOMY, DONE;
-		
-		public String toString()
-		{
-			String s = "" + ordinal();
-			if (ordinal() < 10) 
-				s = '0' + s;
-			s += "_"  + name() + getFilenameExtension();
-			return s;
-		}
-		
-		public String getName() {
-			return this.name();
-		}
-		
-		private String getFilenameExtension()
-		{
-			switch (this)
-			{
-				case MERGED:
-				case TRIMMED:
-					return ".fastq";
-				case NAMES:
-				case TAXONOMY:
-				case TREE:
-					return ".txt";
-				default:
-					return ".fasta";
-			}
-		}
-	}
-	
-	
 	private File		inputDirf;
 	
-	
-	// 
-	// The inputDirf contains paired-end fastq files. Pairs should have names that only
-	// differ in their suffixes: xxx_1.fastq goes with xxx_2.fastq.
-	//
-	Pipeline(File inputDirf, EnvironmentInfo ei)
-	{
+	/**
+	 * @param inputDirf The directory containing the fastq files you wish to work with
+	 * @param ei Conains the information for your local machine
+	 */
+	Pipeline(File inputDirf, EnvironmentInfo ei) {
 		this.inputDirf = inputDirf;
 		this.EI = ei;
 	}
-	
-	
-	void execute()
-	{
-		
+	/**
+	 * This is the method that puts all the methods needed for analysis in the correct
+	 * sequence. It will create a list of all fastq pairs and then it will create a new 
+	 * thread for each pair to execute the selected analysis.
+	 */
+	public void execute()
+	{	
 		ArrayList<File> fqFiles =  new ArrayList<File>();
-		
 		// popululate fqFiles
 		Arrays.stream(inputDirf.list())
 			.filter(fname -> fname.endsWith(".fastq"))
 			.map(fname -> new File(inputDirf, fname))
 			.forEach(fastq -> fqFiles.add(fastq));
-			//.forEach(fastq -> execute(fastq))
-		
 		// take all the fqs and put them into matching pairs
 		ArrayList<FastqPair> pairs = makePairs(fqFiles);
-		
-		// for each pair execute the command on them
-		pairs.parallelStream()
+		pairs.stream()
 			.forEach(fastqPair -> execute(fastqPair));
-		
 		// sort fqfileNames
-		
 	}
 	
 	/**
-	 * This is a horribly ugly algorithm that pairs files together in a given directory
-	 * @param filesToPair
-	 * @return
+	 * Pairs files together in a given directory
+	 * @param filesToPair the files you wish to pair
+	 * @return a list of all files that need to be paired
 	 */
 	private ArrayList<FastqPair> makePairs(ArrayList<File> filesToPair) {
 		ArrayList<FastqPair> returnArray = new ArrayList<FastqPair>();
@@ -124,31 +86,25 @@ public class Pipeline
 		return returnArray;
 	}
 	
-	private String getBaseName(File f) {
-		String fq1 = f.getName();
+	/**
+	 * Gets the base name of fastqFile
+	 * @param fastqFile The fastq file to extract the base name from
+	 * @return The base name of the given fastq
+	 */
+	private String getBaseName(File fastqFile) {
+		String fq1 = fastqFile.getName();
 		String[] elements = fq1.split("_");
 		return elements[0];
 	}
 	
+	/**
+	 * 
+	 * @param pair the pair we 
+	 */
 	private void execute(FastqPair pair)
 	{
 		Commands com = new Commands(EI, pair);
 		CommandList comList = new CommandList();
 		comList.executeStandardAnalysis(com);
 	}
-	
-	
-	// This method can't throw any checked exceptions because it will be called in a stream.
-	private void execute(File fastq)
-	{
-	
-	}
-	
-	
-	private static void sop(Object obj){System.out.println(obj);}
-	
-	// Tester fields
- 
-
-	
 }

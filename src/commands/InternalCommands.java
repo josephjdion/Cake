@@ -6,7 +6,12 @@ import java.io.IOException;
 
 import pipeline.Commands;
 import util.FastqReader;
-
+/**
+ * This handles commands that are executed inside of this program itself 
+ * and not executed in the terminal.
+ * @author Joe
+ *
+ */
 public class InternalCommands {
 	private File outputDir;
 	public InternalCommands(Commands com) {

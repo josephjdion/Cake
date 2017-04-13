@@ -18,6 +18,7 @@ public class Cake {
 	private EnvironmentInfo EI;
 	private ArrayList<File> files = new ArrayList<File>();
 	private  File inputDir;
+	
 	/**
 	 * Sets up the environment conditions and specify fastq files
 	 */
@@ -33,13 +34,15 @@ public class Cake {
 		System.out.println(str);
 		System.out.flush();
 	}
-
+	/**
+	 * Scans for next line from console for user input
+	 * @return user's input
+	 */
 	private String sin() {
 		return scanner.nextLine();
 	}
 	
 	// Main entry point for simplified application
-	
 	public static void main(String[] args) {
 		Cake c = new Cake();
 		c.setup();

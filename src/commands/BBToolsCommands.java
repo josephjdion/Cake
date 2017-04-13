@@ -32,7 +32,9 @@ public class BBToolsCommands {
 		this.lenght18s = Com.get18sLength();
 		this.quality = Com.getQuality();
 	}
-
+	/**
+	 * Merge this class' fastq pair
+	 */
 	public void merge() {
 		String command =
 		// BBTools Directory, In1, In2, output directory
@@ -40,14 +42,22 @@ public class BBToolsCommands {
 		CommandExec.exec(command);
 	}
 	
+	/**
+	 * Call the private trim method for the merged fastq pair. Calls the private
+	 *  trim method using the appropriate quality and length for the strand.
+	 */
 	public void trim() {
 		if(fastqPair.is16S())
-			Trim(length16s);
+			trim(length16s);
 		else
-			Trim(lenght18s);
+			trim(lenght18s);
 	}
-
-	private void Trim(int minLength) {
+	
+	/**
+	 * Trim the merged fastqPair
+	 * @param minLength
+	 */
+	private void trim(int minLength) {
 		String command =
 		// BBTools Directory, output folder, output folder, trim quality, length
 		String.format(TrimStr, BBToolsDir, OutputDir, quality, minLength);

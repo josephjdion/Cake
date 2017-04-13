@@ -44,16 +44,36 @@ public class EnvironmentInfo {
 		this.mothurDir =  dir;
 	}
 	
+	public void setMothurDir(String mothurPath) {
+		this.mothurDir = new File(mothurPath);
+	}
+	
 	public void setBBToolsDir(File dir) {
 		this.BBToolsDir = dir;
+	}
+	
+	public void setBBToolsDir(String bbPath) {
+		this.BBToolsDir = new File(bbPath);
 	}
 	
 	public void setNumOfProcessors(int num) {
 		this.numOfProcessors = num;
 	}
 	
+	public void setNumOfProcessors(String numString) {
+		this.numOfProcessors = Integer.parseInt(numString);
+	}
+	
 	public void setSilva(int version) {
 		this.silvaRefVersion = version;
+	}
+	
+	public void setSilva(String versionString) {
+		this.silvaRefVersion = Integer.parseInt(versionString);
+	}
+	
+	public int getSilvaVersion() {
+		return silvaRefVersion;
 	}
 	
 }

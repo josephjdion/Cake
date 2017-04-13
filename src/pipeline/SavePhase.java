@@ -7,14 +7,22 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * This class is used for saving the phase of each execution process.
+ * @author Joe
+ *
+ */
 public class SavePhase {
 	private File outputDir;
 	
 	public SavePhase(Commands com) {
 		this.outputDir = com.getOutputDir();
 	}
-	
-	public void save(Pipeline.Phase phase) {
+	/**
+	 * Save the given phase in the specific output folder 
+	 * @param phase Phase to save
+	 */
+	public void save(Phase phase) {
 		File file = new File(outputDir + "/CakeSave.txt");
 		try {
 			FileWriter fw = new FileWriter(file);
@@ -26,7 +34,11 @@ public class SavePhase {
 		}
 	}
 	
-	public Pipeline.Phase load() {
+	/**
+	 * Load the phase from the speciic output folder's save file
+	 * @return the phase from the save file
+	 */
+	public Phase load() {
 		String strPhase = "";
 		File file = new File(outputDir + "/CakeSave.txt");
 		try {
@@ -39,7 +51,7 @@ public class SavePhase {
 			return null;
 		} catch (IOException e) {
 			e.printStackTrace();}
-		Pipeline.Phase phase = Pipeline.Phase.valueOf(strPhase);
+		Phase phase = Phase.valueOf(strPhase);
 		return phase;
 	}
 

@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Saves environment info of the local machine. Has bad default values that need
+ * Saves environment info of the local machine. Has default values that need
  * to be overriden
  * 
  * @author Joe
@@ -15,10 +15,11 @@ import java.io.IOException;
 
 public class SaveEnvironment {
 	// hyper threaded CPU Virtualized cores
-	private static String numberOfVirtualizedProcessors = "numOfProcessors=8";
-	private static String mothurDir = "mothurDir=/bbmap";
-	private static String bbToolsDir = "bbToolsDir=/mothur";
-	private static String silvaRefVersion = "silvaV=v123";
+	// Do not modify directly use the setters
+	private  String numberOfVirtualizedProcessors = "numOfProcessors=8";
+	private  String mothurDir = "mothurDir=/bbmap";
+	private  String bbToolsDir = "bbToolsDir=/mothur";
+	private  String silvaRefVersion = "silvaV=123";
 
 	// Save variables
 	// Remember to change the values from their default
@@ -55,18 +56,18 @@ public class SaveEnvironment {
 			e.printStackTrace();
 		}
 		// now set the fields of ei
-		ei.setBBToolsDir(new File (parseLine(SaveEnvironment.bbToolsDir)));
-		ei.setMothurDir(new File (parseLine(SaveEnvironment.mothurDir)));
+		ei.setBBToolsDir(new File (parseLine(this.bbToolsDir)));
+		ei.setMothurDir(new File (parseLine(this.mothurDir)));
 		// get stored value as string
-		String val = parseLine(SaveEnvironment.numberOfVirtualizedProcessors);
+		String val = parseLine(this.numberOfVirtualizedProcessors);
 		// convert to integer
 		int numberOfProc = Integer.parseInt(val);
 		ei.setNumOfProcessors(numberOfProc);
 		// get stored value as string
-		val = parseLine(SaveEnvironment.silvaRefVersion);
+		val = parseLine(this.silvaRefVersion);
 		// convert to integer
-		//int version = Integer.parseInt(val);
-		//ei.setSilva(version);
+		int version = Integer.parseInt(val);
+		ei.setSilva(version);
 		return ei;
 	}
 
@@ -82,33 +83,47 @@ public class SaveEnvironment {
 		setMothurDir(val);
 		val = parseLine(br.readLine());
 		setNumOfProcessors(Integer.parseInt(val));
-		//val = parseLine(br.readLine());
-		//setSilvaRefVersion(Integer.parseInt(val));
+		val = parseLine(br.readLine());
+		setSilvaRefVersion(Integer.parseInt(val));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private String parseLine(String str) {
-		String[] tokens = str.split("=");
+	/**
+	 * Populates the return array with elements from the input string
+	 * @param strToParse String to be parsed
+	 * @return
+	 */
+	private String parseLine(String strToParse) {
+		String[] tokens = strToParse.split("=");
 		return tokens[1];
 	}
 
 	// Set up enviornment before saving
-	public void setNumOfProcessors(int num) {
+	public  void setNumOfProcessors(int num) {
 		numberOfVirtualizedProcessors = "numOfProcessors=" + num;
 	}
 
-	public void setMothurDir(String path) {
+	public  void setMothurDir(String path) {
 		mothurDir = "mothurDir=" + path;
 	}
 
-	public void setBBToolsDir(String path) {
+	public  void setBBToolsDir(String path) {
 		bbToolsDir = "bbToolsDir=" + path;
 	}
 
-	public void setSilvaRefVersion(int version) {
-		silvaRefVersion = "silvaV=v" + version;
+	public  void setSilvaRefVersion(int version) {
+		silvaRefVersion = "silvaV=" + version;
+	}
+
+	public void saveEnvironment(EnvironmentInfo infoToSave) {
+		setBBToolsDir(infoToSave.getBBToolsDir().toString());
+		setMothurDir(infoToSave.getMothurDir().toString());
+		setSilvaRefVersion(infoToSave.getSilvaVersion());
+		setNumOfProcessors(infoToSave.getNumOfProcessors());
+		
+		saveEnvironment();
 	}
 
 }
